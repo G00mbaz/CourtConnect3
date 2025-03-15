@@ -3,47 +3,66 @@ package com.example.courtconnect3;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class RequestCourtActivity extends AppCompatActivity {
 
-    EditText field_coordinates,field_name, field_hours, field_address;
-    Button submit_button;
+    private EditText fieldCoordinates, fieldName, fieldHours, fieldAddress;
+    private Button submitButton;
+    private FirebaseFirestore firestore;
+    private FirebaseAuth auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_court);
 
-        EditText nameEditText = findViewById(R.id.court_name);
-        EditText addressEditText = findViewById(R.id.court_address);
-        EditText hoursEditText = findViewById(R.id.court_hours);
-        EditText coordinatesEditText = findViewById(R.id.court_coordinates);
-        Button submitButton = findViewById(R.id.submit_button);
+        fieldName = findViewById(R.id.court_name);
+        fieldAddress = findViewById(R.id.court_address);
+        fieldHours = findViewById(R.id.court_hours);
+        fieldCoordinates = findViewById(R.id.court_coordinates);
+        submitButton = findViewById(R.id.submit_button);
+
+        firestore = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
 
         submitButton.setOnClickListener(view -> {
-            String name = nameEditText.getText().toString().trim();
-            String address = addressEditText.getText().toString().trim();
-            String hours = hoursEditText.getText().toString().trim();
-            String coordinates = coordinatesEditText.getText().toString().trim();
+            String name = fieldName.getText().toString().trim();
+            String address = fieldAddress.getText().toString().trim();
+            String hours = fieldHours.getText().toString().trim();
+            String coordinates = fieldCoordinates.getText().toString().trim();
+            String userId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : "anonymous";
 
             if (name.isEmpty() || address.isEmpty() || hours.isEmpty() || coordinates.isEmpty()) {
-                Toast.makeText(RequestCourtActivity.this, "נא למלא את כל השדות", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "נא למלא את כל השדות", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // שמירת הבקשה (כדוגמה, שמירה ב-SharedPreferences)
-            saveRequest(name, address, hours, coordinates);
-            Toast.makeText(RequestCourtActivity.this, "הבקשה נשלחה בהצלחה", Toast.LENGTH_SHORT).show();
-            finish();
-        });
-    }
+            Map<String, Object> courtRequest = new HashMap<>();
+            courtRequest.put("name", name);
+            courtRequest.put("address", address);
+            courtRequest.put("hours", hours);
+            courtRequest.put("coordinates", coordinates);
+            courtRequest.put("userId", userId);
+            courtRequest.put("status", "pending");
 
-    private void saveRequest(String name, String address, String hours, String coordinates) {
-        // שמירה ל-SharedPreferences כדוגמה פשוטה
-        getSharedPreferences("court_requests", MODE_PRIVATE)
-                .edit()
-                .putString(name, name + ";" + address + ";" + hours + ";" + coordinates)
-                .apply();
+            firestore.collection("courtRequests").add(courtRequest)
+                    .addOnSuccessListener(documentReference -> {
+                        Toast.makeText(this, "הבקשה נשלחה בהצלחה!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "שגיאה בשליחת הבקשה: " + e.getMessage(), Toast.LENGTH_LONG).show());
+        });
     }
 }

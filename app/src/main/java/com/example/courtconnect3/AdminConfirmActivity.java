@@ -1,6 +1,7 @@
 package com.example.courtconnect3;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,17 +25,15 @@ public class AdminConfirmActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_confirm);
 
-        // התחברות ל-Firestore
         db = FirebaseFirestore.getInstance();
         requestsLayout = findViewById(R.id.requests_layout);
 
-        // טעינת בקשות
         loadRequests();
     }
 
     private void loadRequests() {
         db.collection("courtRequests")
-                .whereEqualTo("status", "pending") // מביא רק בקשות שממתינות לאישור
+                .whereEqualTo("status", "pending")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
@@ -42,26 +41,26 @@ public class AdminConfirmActivity extends AppCompatActivity {
                         String name = document.getString("name");
                         String address = document.getString("address");
                         String hours = document.getString("hours");
-                        Map<String, Object> location = (Map<String, Object>) document.get("location");
-                        double latitude = (double) location.get("latitude");
-                        double longitude = (double) location.get("longitude");
+                        String coordinates = document.getString("coordinates");
 
-                        // יצירת תצוגה עבור כל בקשה
+                        LinearLayout requestContainer = new LinearLayout(this);
+                        requestContainer.setOrientation(LinearLayout.VERTICAL);
+                        requestContainer.setPadding(16, 16, 16, 16);
+
                         TextView requestView = new TextView(this);
-                        requestView.setText("שם: " + name + "\nכתובת: " + address + "\nשעות: " + hours +
-                                "\nמיקום: " + latitude + ", " + longitude);
+                        requestView.setText("שם: " + name + "\nכתובת: " + address + "\nשעות: " + hours + "\nקואורדינטות: " + coordinates);
                         requestView.setPadding(16, 16, 16, 16);
 
                         Button approveButton = new Button(this);
                         approveButton.setText("אישור");
                         approveButton.setOnClickListener(view -> {
-                            approveRequest(requestId, name, address, hours, latitude, longitude);
-                            requestsLayout.removeView(requestView);
-                            requestsLayout.removeView(approveButton);
+                            approveRequest(requestId, name, address, hours, coordinates);
+                            requestsLayout.removeView(requestContainer);
                         });
 
-                        requestsLayout.addView(requestView);
-                        requestsLayout.addView(approveButton);
+                        requestContainer.addView(requestView);
+                        requestContainer.addView(approveButton);
+                        requestsLayout.addView(requestContainer);
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -69,23 +68,17 @@ public class AdminConfirmActivity extends AppCompatActivity {
                 });
     }
 
-    private void approveRequest(String requestId, String name, String address, String hours, double latitude, double longitude) {
-        // יצירת מידע המגרש
+    private void approveRequest(String requestId, String name, String address, String hours, String coordinates) {
         Map<String, Object> field = new HashMap<>();
         field.put("name", name);
         field.put("address", address);
         field.put("hours", hours);
-        field.put("location", new HashMap<String, Object>() {{
-            put("latitude", latitude);
-            put("longitude", longitude);
-        }});
+        field.put("coordinates", coordinates);
 
-        // שמירה בקולקציה של מגרשים מאושרים
         db.collection("fields")
                 .add(field)
                 .addOnSuccessListener(documentReference -> {
-                    // עדכון הסטטוס של הבקשה ל-"approved"
-                    db.collection("fieldRequests").document(requestId)
+                    db.collection("courtRequests").document(requestId)
                             .update("status", "approved")
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(this, "המגרש אושר ונוסף למפה", Toast.LENGTH_SHORT).show();

@@ -7,66 +7,66 @@
     android:layout_height="match_parent"
     tools:context=".RequestCourtActivity">
 
-
     <EditText
         android:id="@+id/court_name"
-        android:layout_width="380dp"
-        android:layout_height="68dp"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
         android:layout_margin="16dp"
-        android:layout_marginTop="100dp"
+        android:padding="12dp"
         android:hint="שם המגרש"
         android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
         android:id="@+id/court_address"
-        android:layout_width="380dp"
-        android:layout_height="65dp"
-        android:layout_margin="16dp"
-        android:layout_marginTop="84dp"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:padding="12dp"
         android:hint="כתובת"
         android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/court_name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/court_name" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- שדה קואורדינטות -->
     <EditText
         android:id="@+id/court_hours"
-        android:layout_width="378dp"
-        android:layout_height="68dp"
-        android:layout_margin="16dp"
-        android:layout_marginTop="76dp"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:padding="12dp"
         android:hint="שעות פעילות"
         android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/court_address"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/court_address" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
         android:id="@+id/court_coordinates"
-        android:layout_width="384dp"
-        android:layout_height="67dp"
-        android:layout_margin="16dp"
-        android:layout_marginTop="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:padding="12dp"
         android:hint="קואורדינטות"
         android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/court_hours"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/court_hours" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- כפתור שליחה -->
     <Button
         android:id="@+id/submit_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_margin="16dp"
-        android:layout_marginTop="332dp"
         android:text="שלח"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.656"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/court_coordinates"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/court_coordinates" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

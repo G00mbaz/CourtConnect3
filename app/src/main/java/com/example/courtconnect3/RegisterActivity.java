@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -18,9 +19,8 @@ import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText registerfullname, registerEmail, registerPassword;
-    Button registerbtn, backToLoginBtn; // הוסף משתנה לכפתור "חזרה לכניסה"
-    TextView registerErrorMessage;
+    EditText registerFullname, registerEmail, registerPassword;
+    Button registerBtn, backToLoginBtn;
     FirebaseAuth auth;
     FirebaseFirestore firestore;
 
@@ -30,57 +30,64 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         // חיבור אלמנטים מה-XML
-        registerfullname = findViewById(R.id.registerfullname);
+        registerFullname = findViewById(R.id.registerfullname);
         registerEmail = findViewById(R.id.registerEmail);
         registerPassword = findViewById(R.id.registerPassword);
-        registerbtn = findViewById(R.id.registerbtn);
-        backToLoginBtn = findViewById(R.id.backToLoginBtn); // התחבר לכפתור "חזרה לכניסה"
+        registerBtn = findViewById(R.id.registerbtn);
+        backToLoginBtn = findViewById(R.id.backToLoginBtn);
 
         // אתחול Firebase
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
 
         // מאזין ללחיצה על כפתור ההרשמה
-        registerbtn.setOnClickListener(v -> {
-            String fullName = registerfullname.getText().toString().trim();
-            String email = registerEmail.getText().toString().trim();
-            String password = registerPassword.getText().toString().trim();
-
-            // בדיקת שדות ריקים
-            if (fullName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(RegisterActivity.this, "נא למלא את כל השדות", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // הרשמת המשתמש ב-Firebase Authentication
-            auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            // קבלת UID של המשתמש החדש
-                            String userId = auth.getCurrentUser().getUid();
-
-                            // יצירת מפת נתונים עבור Firestore
-                            Map<String, Object> userMap = new HashMap<>();
-                            userMap.put("fullName", fullName);
-                            userMap.put("email", email);
-
-                            // שמירת הנתונים ב-Firestore תחת אוסף "users"
-                            firestore.collection("users").document(userId).set(userMap)
-                                    .addOnSuccessListener(aVoid ->
-                                            Toast.makeText(RegisterActivity.this, "נרשמת בהצלחה!", Toast.LENGTH_SHORT).show())
-                                    .addOnFailureListener(e ->
-                                            Toast.makeText(RegisterActivity.this, "שגיאה בשמירת הנתונים: " + e.getMessage(), Toast.LENGTH_LONG).show());
-                        } else {
-                            Toast.makeText(RegisterActivity.this, "הרשמה נכשלה: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    });
-        });
+        registerBtn.setOnClickListener(v -> registerUser());
 
         // מאזין ללחיצה על כפתור "חזרה לכניסה"
         backToLoginBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish(); // מסיים את הפעילות הנוכחית
+            startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+            finish();
         });
+    }
+
+    private void registerUser() {
+        String fullName = registerFullname.getText().toString().trim();
+        String email = registerEmail.getText().toString().trim();
+        String password = registerPassword.getText().toString().trim();
+
+        // בדיקת שדות ריקים
+        if (fullName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "נא למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // הרשמת המשתמש ב-Firebase Authentication
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser firebaseUser = auth.getCurrentUser();
+                        if (firebaseUser != null) {
+                            saveUserToFirestore(firebaseUser.getUid(), fullName, email);
+                        }
+                    } else {
+                        Toast.makeText(this, "הרשמה נכשלה: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    private void saveUserToFirestore(String userId, String fullName, String email) {
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("userId", userId);
+        userMap.put("fullName", fullName);
+        userMap.put("email", email);
+
+        firestore.collection("users").document(userId)
+                .set(userMap)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "נרשמת בהצלחה!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(RegisterActivity.this, MapActivity.class)); // או איך שקוראים למחלקה של המסך עם המפה
+                    finish();
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "שגיאה בשמירת הנתונים: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 }
