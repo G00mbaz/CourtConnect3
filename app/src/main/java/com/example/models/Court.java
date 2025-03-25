@@ -1,28 +1,24 @@
 package com.example.models;
 
+import com.google.firebase.firestore.GeoPoint;
+
 import java.util.List;
 
 public class Court {
     private String courtId;
     private String name;
-    private double latitude;
-    private double longitude;
-    private boolean available;
-    private boolean lights;
-    private String openingHours;
-    private List<String> players;
+    private String lights;
+    private String address;
+    private GeoPoint location;
 
     public Court() {}
 
-    public Court(String courtId, String name, double latitude, double longitude, boolean available, boolean lights, String openingHours, List<String> players) {
+    public Court(String courtId, String name, String lights, GeoPoint location) {
         this.courtId = courtId;
         this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.available = available;
+        this.address=address;
         this.lights = lights;
-        this.openingHours = openingHours;
-        this.players = players;
+        this.location=location;
     }
 
     public String getCourtId() { return courtId; }
@@ -31,21 +27,13 @@ public class Court {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public double getLatitude() { return latitude; }
-    public void setLatitude(double latitude) { this.latitude = latitude; }
+    public String isLights() { return lights; }
+    public void setLights(String lights) { this.lights = lights; }
 
-    public double getLongitude() { return longitude; }
-    public void setLongitude(double longitude) { this.longitude = longitude; }
+    public String getAddress() {return address;}
+    public void setAddress(String address) {this.address=address;}
 
-    public boolean isAvailable() { return available; }
-    public void setAvailable(boolean available) { this.available = available; }
+    public GeoPoint isLoction() {return location;}
+    public void setLoction(GeoPoint loction) {this.location=loction; }
 
-    public boolean isLights() { return lights; }
-    public void setLights(boolean lights) { this.lights = lights; }
-
-    public String getOpeningHours() { return openingHours; }
-    public void setOpeningHours(String openingHours) { this.openingHours = openingHours; }
-
-    public List<String> getPlayers() { return players; }
-    public void setPlayers(List<String> players) { this.players = players; }
 }

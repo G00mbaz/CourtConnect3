@@ -1,4 +1,4 @@
-package com.example.courtconnect3;
+package com.example.activities;
 
 import org.junit.Test;
 

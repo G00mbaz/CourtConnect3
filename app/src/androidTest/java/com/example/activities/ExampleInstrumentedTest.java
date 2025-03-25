@@ -1,4 +1,4 @@
-package com.example.courtconnect3;
+package com.example.activities;
 
 import android.content.Context;
 

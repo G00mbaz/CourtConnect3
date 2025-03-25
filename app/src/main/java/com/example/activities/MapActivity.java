@@ -1,4 +1,4 @@
-package com.example.courtconnect3;
+package com.example.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
+import com.example.courtconnect3.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AdminConfirmActivity"
+    tools:context="com.example.activities.AdminConfirmActivity"
     android:background="@android:color/white">
 
     <!-- כותרת ראשית -->

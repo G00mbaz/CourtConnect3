@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RequestCourtActivity">
+    tools:context="com.example.activities.RequestCourtActivity">
 
     <EditText
         android:id="@+id/court_name"
@@ -33,17 +33,17 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
-        android:id="@+id/court_hours"
+        android:id="@+id/court_lights"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
-        android:padding="12dp"
-        android:hint="שעות פעילות"
+        android:hint="שעות פעילות של האור במגרש"
         android:inputType="text"
-        app:layout_constraintTop_toBottomOf="@id/court_address"
+        android:padding="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/court_address" />
 
     <EditText
         android:id="@+id/court_coordinates"
@@ -52,9 +52,9 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
         android:padding="12dp"
-        android:hint="קואורדינטות"
+        android:hint="הקורדינטות של המגרש ניתן לבדוק בgoogle maps"
         android:inputType="text"
-        app:layout_constraintTop_toBottomOf="@id/court_hours"
+        app:layout_constraintTop_toBottomOf="@id/court_lights"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -68,5 +68,16 @@
         app:layout_constraintTop_toBottomOf="@id/court_coordinates"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/returntomap_btn1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="76dp"
+        android:text="חזרה"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

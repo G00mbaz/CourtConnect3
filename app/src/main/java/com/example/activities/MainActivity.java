@@ -1,4 +1,4 @@
-package com.example.courtconnect3;
+package com.example.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.courtconnect3.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {

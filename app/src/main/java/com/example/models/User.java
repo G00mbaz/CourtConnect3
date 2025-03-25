@@ -6,17 +6,14 @@ public class User {
     private String userId;
     private String name;
     private String email;
-    private String phone;
-    private List<String> favoriteCourts;
+    private List<Court> favoriteCourts;
 
-    // חובה שיהיה קונסטרקטור ריק עבור Firestore
     public User() {}
 
-    public User(String userId, String name, String email, String phone, List<String> favoriteCourts) {
+    public User(String userId, String name, String email, String phone, List<Court> favoriteCourts) {
         this.userId = userId;
         this.name = name;
         this.email = email;
-        this.phone = phone;
         this.favoriteCourts = favoriteCourts;
     }
 
@@ -30,9 +27,7 @@ public class User {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
 
-    public List<String> getFavoriteCourts() { return favoriteCourts; }
-    public void setFavoriteCourts(List<String> favoriteCourts) { this.favoriteCourts = favoriteCourts; }
+    public List<Court> getFavoriteCourts() { return favoriteCourts; }
+    public void setFavoriteCourts(List<Court> favoriteCourts) { this.favoriteCourts = favoriteCourts; }
 }
