@@ -42,26 +42,21 @@ public class AdminConfirmActivity extends AppCompatActivity {
                         String name = document.getString("name");
                         String address = document.getString("address");
                         String lights = document.getString("lights");
-                        GeoPoint coordinates = document.getGeoPoint("coordinates");
+                        GeoPoint coordinates = document.getGeoPoint("location"); // שימוש בשם השדה הנכון
 
                         LinearLayout requestContainer = new LinearLayout(this);
                         requestContainer.setOrientation(LinearLayout.VERTICAL);
                         requestContainer.setPadding(16, 16, 16, 16);
 
                         TextView requestView = new TextView(this);
-                        String coordinatesText;
-                        if (coordinates != null) {
-                            coordinatesText = coordinates.getLatitude() + ", " + coordinates.getLongitude();
-                        } else {
-                            coordinatesText = "לא סופקו קואורדינטות";
-                        }
-                        requestView.setText("שם: " + name + "\nכתובת: " + address + "\nשעות: " + lights + "\nקואורדינטות: " + coordinatesText);
+                        String coordinatesText = (coordinates != null) ? coordinates.getLatitude() + ", " + coordinates.getLongitude() : "לא סופקו קואורדינטות";
+                        requestView.setText("שם: " + name + "\nכתובת: " + address + "\nשעות תאורה: " + lights + "\nקואורדינטות: " + coordinatesText);
                         requestView.setPadding(16, 16, 16, 16);
 
                         Button approveButton = new Button(this);
                         approveButton.setText("אישור");
                         approveButton.setOnClickListener(view -> {
-                            approveRequest(requestId, name, address, lights, String.valueOf(coordinates));
+                            approveRequest(requestId, name, address, lights, coordinates);
                             requestsLayout.removeView(requestContainer);
                         });
 
@@ -75,46 +70,32 @@ public class AdminConfirmActivity extends AppCompatActivity {
                 });
     }
 
-    private void approveRequest(String requestId, String name, String address, String lights, String coordinatesString) {
-        // בדיקה שהקואורדינטות לא ריקות
-        if (coordinatesString == null || !coordinatesString.contains(",")) {
-            Toast.makeText(this, "שגיאה בפורמט הקואורדינטות", Toast.LENGTH_SHORT).show();
+    private void approveRequest(String requestId, String name, String address, String lights, GeoPoint coordinates) {
+        if (coordinates == null) {
+            Toast.makeText(this, "שגיאה: קואורדינטות חסרות", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        try {
-            // המרת הקואורדינטות ממחרוזת למספרים
-            String[] latLng = coordinatesString.split(",");
-            double latitude = Double.parseDouble(latLng[0].trim());
-            double longitude = Double.parseDouble(latLng[1].trim());
-            GeoPoint coordinates = new GeoPoint(latitude, longitude);
+        Map<String, Object> court = new HashMap<>();
+        court.put("name", name);
+        court.put("address", address);
+        court.put("lights", lights);
+        court.put("coordinates", coordinates);
 
-            // יצירת מסמך חדש במאגר השדות
-            Map<String, Object> court = new HashMap<>();
-            court.put("name", name);
-            court.put("address", address);
-            court.put("lights", lights);
-            court.put("location", coordinates);
-
-            db.collection("courts")
-                    .add(court)
-                    .addOnSuccessListener(documentReference -> {
-                        db.collection("courtRequests").document(requestId)
-                                .update("status", "approved")
-                                .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(this, "המגרש אושר ונוסף למפה", Toast.LENGTH_SHORT).show();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(this, "שגיאה בעדכון סטטוס הבקשה", Toast.LENGTH_SHORT).show();
-                                });
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "שגיאה בהוספת המגרש", Toast.LENGTH_SHORT).show();
-                    });
-
-        } catch (Exception e) {
-            Toast.makeText(this, "שגיאה בהמרת הקואורדינטות: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        db.collection("courts")
+                .add(court)
+                .addOnSuccessListener(documentReference -> {
+                    db.collection("courtRequests").document(requestId)
+                            .update("status", "approved")
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(this, "המגרש אושר ונוסף למפה", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this, "שגיאה בעדכון סטטוס הבקשה", Toast.LENGTH_SHORT).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "שגיאה בהוספת המגרש", Toast.LENGTH_SHORT).show();
+                });
     }
-
 }

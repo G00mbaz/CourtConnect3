@@ -63,7 +63,7 @@ public class RequestCourtActivity extends AppCompatActivity {
                 courtRequest.put("name", name);
                 courtRequest.put("address", address);
                 courtRequest.put("lights", lights);
-                courtRequest.put("location", location);
+                courtRequest.put("coordinates", coordinates);
                 courtRequest.put("userId", userId);
                 courtRequest.put("status", "pending");
 

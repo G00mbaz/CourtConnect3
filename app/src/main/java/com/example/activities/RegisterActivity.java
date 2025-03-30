@@ -84,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
                 .set(userMap)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "נרשמת בהצלחה!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(RegisterActivity.this, MapActivity.class)); // או איך שקוראים למחלקה של המסך עם המפה
+                    startActivity(new Intent(RegisterActivity.this, MapActivity.class));
                     finish();
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "שגיאה בשמירת הנתונים: " + e.getMessage(), Toast.LENGTH_LONG).show());
