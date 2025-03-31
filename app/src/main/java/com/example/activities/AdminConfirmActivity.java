@@ -15,6 +15,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class AdminConfirmActivity extends AppCompatActivity {
 
@@ -42,7 +43,7 @@ public class AdminConfirmActivity extends AppCompatActivity {
                         String name = document.getString("name");
                         String address = document.getString("address");
                         String lights = document.getString("lights");
-                        GeoPoint coordinates = document.getGeoPoint("location"); // שימוש בשם השדה הנכון
+                        GeoPoint coordinates = document.getGeoPoint("coordinates");
 
                         LinearLayout requestContainer = new LinearLayout(this);
                         requestContainer.setOrientation(LinearLayout.VERTICAL);
@@ -50,7 +51,7 @@ public class AdminConfirmActivity extends AppCompatActivity {
 
                         TextView requestView = new TextView(this);
                         String coordinatesText = (coordinates != null) ? coordinates.getLatitude() + ", " + coordinates.getLongitude() : "לא סופקו קואורדינטות";
-                        requestView.setText("שם: " + name + "\nכתובת: " + address + "\nשעות תאורה: " + lights + "\nקואורדינטות: " + coordinatesText);
+                        requestView.setText("שם: " + name + "\nכתובת: " + address + "\nשעות תאורה  : " + lights + "\nקואורדינטות: " + coordinatesText);
                         requestView.setPadding(16, 16, 16, 16);
 
                         Button approveButton = new Button(this);
@@ -76,11 +77,14 @@ public class AdminConfirmActivity extends AppCompatActivity {
             return;
         }
 
+        String courtId = UUID.randomUUID().toString();
+
         Map<String, Object> court = new HashMap<>();
         court.put("name", name);
         court.put("address", address);
         court.put("lights", lights);
         court.put("coordinates", coordinates);
+        court.put("courtId", courtId);
 
         db.collection("courts")
                 .add(court)

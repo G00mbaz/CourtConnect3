@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">CourtConnect3</string>
+
+    <string-array name="lights_options">
+        <item>יש תאורה</item>
+        <item>אין תאורה</item>
+    </string-array>
 </resources>

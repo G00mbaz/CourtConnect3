@@ -1,90 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="com.example.activities.ProfileActivity">
 
-    <!-- החצי העליון של המסך -->
-    <LinearLayout
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="12dp"
+        android:src="@drawable/default_profile"
+        android:scaleType="centerCrop"
+        android:background="@drawable/profile_circle"
+        android:padding="2dp" />
+
+    <TextView
+        android:id="@+id/full_name_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="שם משתמש"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="מגרשים מועדפים:"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favorite_courts_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:clipToPadding="false"
+        android:paddingBottom="8dp" />
 
-        <!-- תמונת הפרופיל -->
-
-        <Button
-            android:id="@+id/back_to_map_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="חזרה למפה"
-            tools:text="חזרה למפה" />
-
-        <ImageView
-            android:id="@+id/profile_image"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginTop="20dp"
-            android:src="@drawable/baseline_account_box_24"
-            android:scaleType="centerCrop" />
-
-        <!-- שם המשתמש -->
-        <TextView
-            android:id="@+id/username_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="שם המשתמש"
-            android:textSize="22sp"
-            android:textStyle="bold" />
-
-        <!-- כתובת המייל -->
-        <TextView
-            android:id="@+id/email_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="user@example.com"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <!-- החצי התחתון של המסך - ScrollView -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <!-- ScrollView עם כותרת בראשו -->
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <!-- כותרת של ה-ScrollView -->
-                <TextView
-                    android:id="@+id/scrollview_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="מגרשים מועדפים"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:padding="16dp"
-                    />
-
-                <!-- תוכן ה-ScrollView - הוסף כאן את הרכיבים הנוספים -->
-                <!-- לדוגמה: -->
-
-                <!-- הוסף עוד רכיבים לפי הצורך -->
-
-            </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
 </LinearLayout>

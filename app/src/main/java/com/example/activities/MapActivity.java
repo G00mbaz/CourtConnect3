@@ -117,15 +117,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void loadApprovedCourts() {
-        db.collection("courtRequests")
-                .whereEqualTo("status", "approved") // רק מגרשים מאושרים
+        db.collection("courts")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         String name = document.getString("name");
                         String address = document.getString("address");
                         String lights = document.getString("lights");
-                        GeoPoint location = document.getGeoPoint("location");
+                        GeoPoint location = document.getGeoPoint("coordinates");
 
                         if (location != null) {
                             LatLng courtLocation = new LatLng(location.getLatitude(), location.getLongitude());

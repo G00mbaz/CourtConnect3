@@ -1,82 +1,106 @@
 package com.example.activities;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.models.CourtRequests;
 import com.example.courtconnect3.R;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Locale;
 
 public class RequestCourtActivity extends AppCompatActivity {
 
-    private EditText courtCoordinates, courtName, courtAddress, courtLights;
-    private Button submitButton;
-    private FirebaseFirestore firestore;
-    private FirebaseAuth auth;
-    private Button returntomap_btn1;
+    private EditText nameEditText;
+    private Spinner lightsSpinner;
+    private LatLng selectedLatLng = null;
+    private String selectedAddress = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_court);
 
-        courtName = findViewById(R.id.court_name);
-        courtAddress = findViewById(R.id.court_address);
-        courtCoordinates = findViewById(R.id.court_coordinates);
-        courtLights=findViewById(R.id.court_lights);
-        submitButton = findViewById(R.id.submit_button);
-        returntomap_btn1 = findViewById(R.id.returntomap_btn1);
+        nameEditText = findViewById(R.id.editTextCourtName);
+        lightsSpinner = findViewById(R.id.spinnerLights);
+        Button submitButton = findViewById(R.id.buttonSubmitCourtRequest);
 
-        firestore = FirebaseFirestore.getInstance();
-        auth = FirebaseAuth.getInstance();
+        // אתחול Places
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), "AIzaSyAek5fmyIgki42Wh2Vo5OMLrYZ3TozFAWk", Locale.getDefault());
+        }
 
-        returntomap_btn1.setOnClickListener(view -> {
-            finish();
-        });
+        // הגדרת אוטוקומפליט של כתובת
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
-        submitButton.setOnClickListener(view -> {
-            String name = courtName.getText().toString().trim();
-            String address = courtAddress.getText().toString().trim();
-            String lights = courtLights.getText().toString().trim();
-            String coordinates = courtCoordinates.getText().toString().trim();
-            String userId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : "anonymous";
+        if (autocompleteFragment != null) {
+            autocompleteFragment.setPlaceFields(Arrays.asList(
+                    Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG));
 
-            if (name.isEmpty() || address.isEmpty() || coordinates.isEmpty()) {
-                Toast.makeText(this, "נא למלא את כל השדות", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(@NonNull Place place) {
+                    selectedLatLng = place.getLatLng();
+                    selectedAddress = place.getAddress();
+                    Log.i("PLACE", "Selected: " + selectedAddress + " at " + selectedLatLng);
+                }
 
-            try {
-                String[] latLng = coordinates.split(",");
-                double latitude = Double.parseDouble(latLng[0].trim());
-                double longitude = Double.parseDouble(latLng[1].trim());
-                GeoPoint location = new GeoPoint(latitude, longitude);
+                @Override
+                public void onError(@NonNull Status status) {
+                    Log.e("PLACE", "Error: " + status);
+                    Toast.makeText(RequestCourtActivity.this,
+                            "שגיאה בבחירת כתובת: " + status.getStatusMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
-                Map<String, Object> courtRequest = new HashMap<>();
-                courtRequest.put("name", name);
-                courtRequest.put("address", address);
-                courtRequest.put("lights", lights);
-                courtRequest.put("coordinates", coordinates);
-                courtRequest.put("userId", userId);
-                courtRequest.put("status", "pending");
-
-                firestore.collection("courtRequests").add(courtRequest)
-                        .addOnSuccessListener(documentReference -> {
-                            Toast.makeText(this, "הבקשה נשלחה בהצלחה!", Toast.LENGTH_SHORT).show();
-                            finish();
-                        })
-                        .addOnFailureListener(e ->
-                                Toast.makeText(this, "שגיאה בשליחת הבקשה: " + e.getMessage(), Toast.LENGTH_LONG).show());
-            } catch (Exception e) {
-                Toast.makeText(this, "שגיאה בקואורדינטות. ודא שהפורמט הוא 'latitude,longitude'", Toast.LENGTH_LONG).show();
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submitCourtRequest();
             }
         });
+    }
+
+    private void submitCourtRequest() {
+        String name = nameEditText.getText().toString().trim();
+        String lights = lightsSpinner.getSelectedItem().toString();
+
+        if (name.isEmpty() || selectedLatLng == null || selectedAddress == null) {
+            Toast.makeText(this, "אנא מלא את כל השדות", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        GeoPoint geoPoint = new GeoPoint(selectedLatLng.latitude, selectedLatLng.longitude);
+        CourtRequests courtRequest = new CourtRequests(name, selectedAddress, lights, geoPoint);
+
+        FirebaseFirestore.getInstance()
+                .collection("courtRequests")
+                .add(courtRequest)
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(this, "הבקשה נשלחה!", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "שגיאה בשליחה: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }
