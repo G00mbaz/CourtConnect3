@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- פרטי המגרש -->
     <TextView
         android:id="@+id/court_name"
         android:layout_width="wrap_content"
@@ -21,10 +22,39 @@
         android:textSize="16sp" />
 
     <TextView
-        android:id="@+id/court_hours"
+        android:id="@+id/court_lights"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="שעות פעילות"
         android:textSize="16sp" />
+
+    <!-- צ'אט -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/chat_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="הקלד הודעה..."
+            android:background="@android:drawable/editbox_background" />
+
+        <ImageButton
+            android:id="@+id/chat_send_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_send"
+            android:background="?attr/selectableItemBackground" />
+    </LinearLayout>
 
 </LinearLayout>
