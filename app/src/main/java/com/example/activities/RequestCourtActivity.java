@@ -31,6 +31,7 @@ public class RequestCourtActivity extends AppCompatActivity {
     private Spinner lightsSpinner;
     private LatLng selectedLatLng = null;
     private String selectedAddress = null;
+    private Button backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,10 @@ public class RequestCourtActivity extends AppCompatActivity {
         nameEditText = findViewById(R.id.editTextCourtName);
         lightsSpinner = findViewById(R.id.spinnerLights);
         Button submitButton = findViewById(R.id.buttonSubmitCourtRequest);
+        Button backButton = findViewById(R.id.buttonBackToMap);
+        backButton.setOnClickListener(v -> {
+            finish();
+        });
 
         // אתחול Places
         if (!Places.isInitialized()) {

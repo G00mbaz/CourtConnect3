@@ -45,4 +45,22 @@
         android:clipToPadding="false"
         android:paddingBottom="8dp" />
 
+    <Button
+        android:id="@+id/button_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="התנתק"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/design_default_color_error"
+        android:textColor="@android:color/white" />
+    <!-- כפתור חזרה למפה -->
+    <Button
+        android:id="@+id/buttonBackToMap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="חזור למפה"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/design_default_color_primary"
+        android:textColor="@android:color/white" />
+
 </LinearLayout>

@@ -1,6 +1,8 @@
 package com.example.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -23,7 +25,7 @@ public class ProfileActivity extends AppCompatActivity {
     private RecyclerView favoritesRecyclerView;
     private FirebaseFirestore firestore;
     private FirebaseAuth auth;
-
+    private Button logoutButton, backButton;
     private List<String> favoriteCourts = new ArrayList<>();
     private FavoriteCourtsAdapter adapter;
 
@@ -31,10 +33,20 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
+        Button logoutButton = findViewById(R.id.button_logout);
+        logoutButton.setOnClickListener(v -> {
+            auth.signOut();
+            Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
         profileImage = findViewById(R.id.profile_image);
         fullNameText = findViewById(R.id.full_name_text);
         favoritesRecyclerView = findViewById(R.id.favorite_courts_list);
+        Button backButton = findViewById(R.id.buttonBackToMap);
+        backButton.setOnClickListener(v -> {
+            finish();
+        });
 
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -72,4 +84,5 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
     }
+
 }
