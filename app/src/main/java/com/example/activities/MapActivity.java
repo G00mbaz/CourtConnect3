@@ -101,7 +101,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             if (location != null) {
                 LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
-                mMap.addMarker(new MarkerOptions().position(userLocation).title("המיקום שלי"));
             }
         });
     }
