@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.example.courtconnect3.R;
 import com.example.models.ChatMessage;
 import com.example.activities.ProfileActivity;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
@@ -53,11 +54,26 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         holder.userName.setText(message.getUserName());
         holder.messageText.setText(message.getMessage());
 
-        if (message.getProfileImageUrl() != null && !message.getProfileImageUrl().isEmpty()) {
-            Glide.with(context).load(message.getProfileImageUrl()).into(holder.profileImage);
-        } else {
-            holder.profileImage.setImageResource(R.drawable.default_profile); // תמונה ברירת מחדל
-        }
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(message.getUserId())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String imageUrl = documentSnapshot.getString("profileImageUrl");
+                        if (imageUrl != null && !imageUrl.isEmpty()) {
+                            Glide.with(context).load(imageUrl).into(holder.profileImage);
+                        } else {
+                            holder.profileImage.setImageResource(R.drawable.default_profile);
+                        }
+                    } else {
+                        holder.profileImage.setImageResource(R.drawable.default_profile);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    holder.profileImage.setImageResource(R.drawable.default_profile);
+                });
+
 
         holder.profileImage.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProfileActivity.class);
