@@ -135,7 +135,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // הוספת הודעה למשתמש במקרה של שגיאה
+                    //הוספת הודעה למשתמש במקרה של שגיאה
                 });
     }
 }
